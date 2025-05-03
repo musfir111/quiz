@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>English Quiz</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .quiz-container {
+      background: #ffffff15;
+      backdrop-filter: blur(10px);
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      width: 350px;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 1rem;
+    }
+
+    .question {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+    }
+
+    .answers button {
+      display: block;
+      background-color: #fff;
+      color: #333;
+      border: none;
+      border-radius: 10px;
+      padding: 10px;
+      margin: 0.5rem 0;
+      width: 100%;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .answers button:hover {
+      background-color: #ddd;
+    }
+
+    #score, #timer {
+      margin-top: 1rem;
+      font-size: 1rem;
+    }
+
+    #result {
+      font-size: 1.4rem;
+      margin-top: 1rem;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-container">
+    <h2>English Quiz</h2>
+    <div id="timer">Time left: <span id="time">30</span> sec</div>
+    <div class="question" id="question">Loading...</div>
+    <div class="answers" id="answers"></div>
+    <div id="score">Score: 0</div>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+        question: "Choose the correct spelling:",
+        options: ["Definately", "Definitely", "Definitly", "Definete"],
+        answer: "Definitely"
+      },
+      {
+        question: "What is the opposite of 'ancient'?",
+        options: ["Modern", "Old", "Historic", "Past"],
+        answer: "Modern"
+      },
+      {
+        question: "Identify the verb in this sentence: 'She runs daily.'",
+        options: ["She", "Runs", "Daily", "None"],
+        answer: "Runs"
+      },
+      {
+        question: "Select the synonym for 'happy':",
+        options: ["Sad", "Joyful", "Angry", "Tired"],
+        answer: "Joyful"
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let timeLeft = 30;
+    const questionEl = document.getElementById('question');
+    const answersEl = document.getElementById('answers');
+    const scoreEl = document.getElementById('score');
+    const resultEl = document.getElementById('result');
+    const timeEl = document.getElementById('time');
+
+    function loadQuestion() {
+      const q = quizData[currentQuestion];
+      questionEl.textContent = q.question;
+      answersEl.innerHTML = "";
+      q.options.forEach(option => {
+        const btn = document.createElement('button');
+        btn.textContent = option;
+        btn.onclick = () => checkAnswer(option);
+        answersEl.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected) {
+      if (selected === quizData[currentQuestion].answer) {
+        score += 10;
+      } else {
+        score -= 5;
+      }
+      scoreEl.textContent = `Score: ${score}`;
+      currentQuestion++;
+      if (currentQuestion < quizData.length && timeLeft > 0) {
+        loadQuestion();
+      } else {
+        endQuiz();
+      }
+    }
+
+    function endQuiz() {
+      questionEl.style.display = 'none';
+      answersEl.style.display = 'none';
+      resultEl.style.display = 'block';
+      resultEl.textContent = `Quiz Over! Final Score: ${score}`;
+    }
+
+    function startTimer() {
+      const timer = setInterval(() => {
+        timeLeft--;
+        timeEl.textContent = timeLeft;
+        if (timeLeft <= 0 || currentQuestion >= quizData.length) {
+          clearInterval(timer);
+          endQuiz();
+        }
+      }, 1000);
+    }
+
+    loadQuestion();
+    startTimer();
+  </script>
+</body>
+</html>
